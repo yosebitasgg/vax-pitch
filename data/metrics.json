@@ -1,25 +1,41 @@
 {
   "model": {
-    "version": "v4",
-    "champion_date": "2026-04-27",
-    "training_window_months": 9,
-    "validation": "temporal split + decay exponencial",
+    "version": "v5",
+    "champion_date": "2026-05-13",
+    "n_total_post_cleanup": { "venta": 7236, "costo": 7199 },
+    "n_train": { "venta": 4312, "costo": 4289 },
+    "n_holdout": { "venta": 1447, "costo": 1440 },
+    "validation": "split temporal 80/20 + decay exponencial 60d · banda calibrada por segmento",
     "venta": {
-      "mape": 10.20,
-      "r2": 0.9054,
-      "mae_mxn": 4830,
-      "rmse_mxn": 8459,
-      "coverage_p10_p90": 87.2,
-      "interval_width_pct": 41.7
+      "mape": 9.73,
+      "r2": 0.9210,
+      "mae_mxn": 4500.15,
+      "rmse_mxn": 7737.87,
+      "coverage_p10_p90": 88.0,
+      "interval_width_pct": 38.9
     },
     "costo": {
-      "mape": 11.11,
-      "r2": 0.9057,
-      "mae_mxn": 4201,
-      "rmse_mxn": 7638,
-      "coverage_p10_p90": 88.5,
-      "interval_width_pct": 39.4
+      "mape": 11.03,
+      "r2": 0.9140,
+      "mae_mxn": 4130.72,
+      "rmse_mxn": 7299.98,
+      "coverage_p10_p90": 87.4,
+      "interval_width_pct": 39.0
+    },
+    "improvement_vs_v4": {
+      "venta_mae_delta_mxn": -329,
+      "venta_mae_delta_pct": -6.8,
+      "venta_r2_delta": 0.016,
+      "costo_mae_delta_mxn": -70,
+      "costo_mae_delta_pct": -1.7,
+      "costo_r2_delta": 0.008,
+      "band_tightening_pct_pts": 2.8
     }
+  },
+  "features": {
+    "families": ["ruta", "temporal", "segmento", "equipo", "accesoriales"],
+    "total_features": { "venta": 20, "costo": 18 },
+    "notes": "Familia 'ruta' pasó de 3 a 6 señales — corazón de v5. Costo usa 2 menos para preservar calibración."
   },
   "inference": {
     "seconds": 2,

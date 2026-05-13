@@ -315,7 +315,7 @@
           <header class="ed-head">
             <span class="ed-eyebrow r-fade">— Capítulo IV —</span>
             <h1 class="ed-title r-rise"><em class="italic purple">Lo que</em> prometemos.</h1>
-            <p class="ed-standfirst r-rise-soft">Champion v4 &middot; validación temporal con decay &middot; n&thinsp;≈&thinsp;3,047 cotizaciones.</p>
+            <p class="ed-standfirst r-rise-soft">Champion v5 &middot; validación temporal con decay &middot; n&thinsp;≈&thinsp;7,236 cargas.</p>
           </header>
 
           <div class="layout">
@@ -323,14 +323,14 @@
               <div class="stat-lead">
                 <span class="lead-kicker r-fade">Error promedio · venta</span>
                 <div class="big r-ink">
-                  <span class="count-up" data-from="0" data-to="10.20" data-decimals="2" data-duration="1.8">0.00</span>
+                  <span class="count-up" data-from="0" data-to="9.73" data-decimals="2" data-duration="1.8">0.00</span>
                   <span class="pct">%</span>
                 </div>
-                <p class="caption r-rise-soft"><em>Mean Absolute Percentage Error</em> sobre nueve meses de validación temporal.</p>
+                <p class="caption r-rise-soft"><em>Mean Absolute Percentage Error</em> sobre el holdout temporal con decay.</p>
               </div>
               <div class="secondary r-rise-soft">
-                <span class="val count-up" data-from="0" data-to="0.9054" data-decimals="4" data-duration="1.8">0.0000</span>
-                <span class="lbl"><em>R²</em> &mdash; el modelo explica el 90.5&thinsp;% de la varianza observada.</span>
+                <span class="val count-up" data-from="0" data-to="0.9210" data-decimals="4" data-duration="1.8">0.0000</span>
+                <span class="lbl"><em>R²</em> &mdash; el modelo explica el 92.1&thinsp;% de la varianza observada.</span>
               </div>
             </div>
 
@@ -341,20 +341,20 @@
                 <span class="th" style="text-align:right;">Costo</span>
 
                 <span class="row-label">MAPE</span>
-                <span class="val">10.20 %</span>
-                <span class="val dim">11.11 %</span>
+                <span class="val">9.73 %</span>
+                <span class="val dim">11.03 %</span>
 
                 <span class="row-label">R²</span>
-                <span class="val">0.9054</span>
-                <span class="val dim">0.9057</span>
+                <span class="val">0.9210</span>
+                <span class="val dim">0.9140</span>
 
                 <span class="row-label">MAE (MXN)</span>
-                <span class="val">$ 4&thinsp;830</span>
-                <span class="val dim">$ 4&thinsp;201</span>
+                <span class="val">$ 4&thinsp;500</span>
+                <span class="val dim">$ 4&thinsp;131</span>
 
                 <span class="row-label">RMSE (MXN)</span>
-                <span class="val">$ 8&thinsp;459</span>
-                <span class="val dim">$ 7&thinsp;638</span>
+                <span class="val">$ 7&thinsp;738</span>
+                <span class="val dim">$ 7&thinsp;300</span>
               </div>
 
               <div class="band-figure r-fade">
@@ -376,7 +376,7 @@
                   </g>
                 </svg>
                 <div class="coverage">
-                  <span class="pct count-up" data-from="0" data-to="87.2" data-decimals="1" data-duration="1.6">0.0</span>
+                  <span class="pct count-up" data-from="0" data-to="88.0" data-decimals="1" data-duration="1.6">0.0</span>
                   <span class="lbl"><em>%</em> de las predicciones caen dentro de la banda &mdash; lo prometido se cumple.</span>
                 </div>
               </div>
@@ -384,8 +384,8 @@
           </div>
 
           <footer class="footnotes r-fade">
-            <span><b>¹</b> Champion v4 · 2026-04-27. Métricas evaluadas en split temporal con decay 60d.</span>
-            <span><b>²</b> Coverage objetivo: 80&thinsp;%. <em>Observado:</em> 87.2&thinsp;%.</span>
+            <span><b>¹</b> Champion v5 · 2026-05-13. Métricas evaluadas en holdout temporal (20&thinsp;%) con decay 60d.</span>
+            <span><b>²</b> Coverage objetivo: 80&thinsp;%. <em>Observado:</em> 88.0&thinsp;%.</span>
           </footer>
 
         </div>
