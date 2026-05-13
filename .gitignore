@@ -1,0 +1,8 @@
+.DS_Store
+.test*.png
+.ed*.png
+.r[0-9]*.png
+.t[0-9]*.png
+.u[0-9]*.png
+.playwright-mcp/
+node_modules/

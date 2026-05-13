@@ -1,0 +1,54 @@
+{
+  "model": {
+    "version": "v4",
+    "champion_date": "2026-04-27",
+    "training_window_months": 9,
+    "validation": "temporal split + decay exponencial",
+    "venta": {
+      "mape": 10.20,
+      "r2": 0.9054,
+      "mae_mxn": 4830,
+      "rmse_mxn": 8459,
+      "coverage_p10_p90": 87.2,
+      "interval_width_pct": 41.7
+    },
+    "costo": {
+      "mape": 11.11,
+      "r2": 0.9057,
+      "mae_mxn": 4201,
+      "rmse_mxn": 7638,
+      "coverage_p10_p90": 88.5,
+      "interval_width_pct": 39.4
+    }
+  },
+  "inference": {
+    "seconds": 2,
+    "features_visible": [
+      "ruta",
+      "fecha",
+      "peso",
+      "tipo de equipo",
+      "accesoriales"
+    ]
+  },
+  "industry": [
+    {
+      "value": 90,
+      "unit": "horas",
+      "label": "tiempo promedio de respuesta a una cotización",
+      "source": "GoFreight · Speed to Lead, 2025"
+    },
+    {
+      "value": 78,
+      "unit": "%",
+      "label": "de los compradores B2B le compran al primero que responde",
+      "source": "Cargorates.ai, 2025"
+    },
+    {
+      "value": 31,
+      "unit": "%",
+      "label": "de las cotizaciones reciben respuesta — 7 de cada 10 se pierden en el silencio",
+      "source": "Rippey AI Study, 2025"
+    }
+  ]
+}

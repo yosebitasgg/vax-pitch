@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>VAX · Pitch de avances · Mayo 2026</title>
+  <meta name="description" content="VAX Pricing Engine · Reto Optimización No-Lineal · ITESM" />
+  <link rel="icon" type="image/png" href="assets/vax-mark.png" />
+  <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/fraunces-italic.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/caveat.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles/main.css?v=8" />
+  <link rel="stylesheet" href="styles/sections.css?v=8" />
+  <link rel="stylesheet" href="styles/motion.css?v=8" />
+</head>
+<body>
+
+<div class="stage">
+  <div class="canvas" id="canvas">
+
+    <!-- ============ SLIDE 1 — COVER ============ -->
+    <section class="slide s-cover is-active" id="s1">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <div class="issue r-fade">
+            <div class="label">VAX · Pricing Engine · Avances</div>
+            <div class="issue-no">Vol. 01 — Mayo 2026</div>
+          </div>
+
+          <div class="lede">
+            <span class="kicker r-fade">Reto Optimización No-Lineal</span>
+            <h1 class="title tw" data-tw-text='El primero que cotiza, |em|gana.|/em|'></h1>
+            <p class="deck-line r-rise-soft">Pricing inteligente para logística transfronteriza México&hairsp;↔&hairsp;Estados Unidos.</p>
+            <div class="corner-hand r-fade" data-delay="2.4">
+              <svg width="48" height="20" viewBox="0 0 48 20" class="doodle">
+                <path d="M 2 14 C 10 6, 20 4, 32 8 L 28 4 M 32 8 L 28 12" />
+              </svg>
+              <span>pitch · mayo 2026</span>
+            </div>
+          </div>
+
+          <aside class="aside r-fade">
+            <figure class="figure">
+              <svg viewBox="115 370 155 130" preserveAspectRatio="xMidYMid meet" class="doodle" id="cover-map">
+                <g class="map-strokes" stroke="currentColor" fill="none" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round" style="color: var(--ink); opacity: 0.55;">
+                  <!-- Mexico -->
+                  <path d="M133.847,433.982l4.175,13.146l-1.945,1.089l0.216,2.61l3.674,2.827v5.229l4.538,4.356l-1.945-12.847l-2.593-8.497l0.648-5.877l2.161,0.217l0.865,1.962l-0.865,5.005l11.237,21.99v7.841l9.077,10.666l9.94,4.573l4.106-2.396l5.835,4.789l3.458-3.483l-1.513-3.925l4.97-1.521l1.513,0.873l1.513-1.521h2.377l4.322-7.624l-2.161-1.962l-8.428,1.962l-1.945,5.662L182.106,480l-5.834-2.396l-2.593-8.271l1.962-10.434l-4.011-2.498l-1.91-10.02l-1.599-0.683l-2.922,2.965l-3.354-1.789l-1.313-6.682l-13.286-1.393l-6.863-5.16L133.847,433.982L133.847,433.982z"/>
+                  <!-- US mainland -->
+                  <path d="M143.589,375.989l-0.865,3.475l-3.017-1.954h-1.504l-0.865,3.691l-10.554,23.65l2.801,20.606l3.449,1.737l0.648,5.645h7.105l6.889,5.204l13.562,1.305l1.504,6.941l2.152,1.521l3.017-3.033l2.369,1.08l2.152,9.976l3.656,2.386l3.017-5.645l9.258-6.726l6.025,2.817l5.169,0.433l0.216-3.25l10.762,0.217l2.152,2.386l0.432,5.42l-1.288,3.034l1.504,5.203h3.233l3.232-4.987l-1.288-2.386l-1.288-5.204l1.936-5.86l8.826-7.59l6.673-1.953l-0.864-6.293l9.258-9.983l9.258-1.521l-1.504-5.193l9.042-5.205v-6.94l-0.865-0.433l-3.233,1.082l-0.432,4.252l-10.745,0.129l-8.419,5.594l-13.217,4.322l-2.109-2.586l5.999-9.076l-2.965-2.826l-2.014-3.838l-4.175-3.354l-4.538-0.38l-8.575-5.852L143.589,375.989L143.589,375.989z"/>
+                </g>
+                <!-- compass rose -->
+                <g transform="translate(258 380)" stroke="currentColor" fill="none" stroke-width="0.5" style="color: var(--gold); opacity: 0.9;">
+                  <circle cx="0" cy="0" r="7"/>
+                  <path d="M 0 -10 L 1 -2 L 0 0 L -1 -2 Z" fill="currentColor"/>
+                  <text x="-1.6" y="-11.5" font-family="Fraunces" font-style="italic" font-size="3" fill="currentColor" stroke="none">N</text>
+                </g>
+                <!-- route arc, drawn -->
+                <g class="cover-routes" stroke="currentColor" fill="none" stroke-width="0.6" stroke-linecap="round" style="color: var(--purple); opacity: 0.9;">
+                  <path d="M 170 432 Q 178 426, 190 432" />
+                  <path d="M 138 425 Q 142 420, 150 423" />
+                  <path d="M 175 467 Q 178 463, 185 466" />
+                </g>
+                <g class="cover-pins" fill="currentColor" style="color: var(--gold);">
+                  <circle cx="170" cy="432" r="1.2"/>
+                  <circle cx="190" cy="432" r="1.2"/>
+                  <circle cx="138" cy="425" r="1.2"/>
+                  <circle cx="150" cy="423" r="1.2"/>
+                  <circle cx="175" cy="467" r="1.2"/>
+                  <circle cx="185" cy="466" r="1.2"/>
+                </g>
+              </svg>
+            </figure>
+            <figcaption><b>Figura 1.</b> Geografía del reto: corredor MX&thinsp;↔&thinsp;US. <em>Frontera norte como cuello de botella operativo.</em></figcaption>
+          </aside>
+
+          <div class="colophon r-fade">
+            <div class="left">
+              <span>Equipo · VAX</span>
+              <span>Reto · Optimización No-Lineal</span>
+            </div>
+            <div class="right">
+              <em>10 minutos · 8 capítulos</em>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">01 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 2 — DOLOR ============ -->
+    <section class="slide s-pain" id="s2">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo I —</span>
+            <h1 class="ed-title r-rise"><em class="italic purple">El dolor.</em></h1>
+            <p class="ed-standfirst r-rise-soft">En este negocio no gana el mejor precio; gana <em>quien lo manda primero</em>.</p>
+          </header>
+
+          <div class="panels">
+            <div class="panel left">
+              <span class="role r-fade">Industria · promedio</span>
+              <div class="big-number r-ink">
+                <span class="count-up" data-from="0" data-to="90" data-duration="1.4">0</span>
+                <span class="unit">horas</span>
+              </div>
+              <p class="caption r-rise-soft">
+                es el tiempo que un forwarder tarda en promedio en regresar
+                una cotización al cliente.
+                <span class="fn">¹</span>
+              </p>
+              <span class="hand r-fade" data-delay="2">— casi cuatro días.</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="panel right">
+              <span class="role r-fade">VAX</span>
+              <div class="big-number r-ink">
+                <span class="count-up" data-from="120" data-to="2" data-duration="1.4">120</span>
+                <span class="unit">segundos</span>
+              </div>
+              <p class="caption r-rise-soft">
+                Y <b>78&thinsp;%</b> de los compradores B2B le compran
+                <span class="underlined">al primero que responde<svg viewBox="0 0 200 14" preserveAspectRatio="none"><path class="underline-stroke" d="M 2 9 Q 60 1, 100 7 T 198 5"/></svg></span>.
+                <span class="fn">²</span>
+              </p>
+              <span class="hand r-fade" data-delay="2.2">— el comercial llega cuarto.</span>
+            </div>
+          </div>
+
+          <footer class="footnotes r-fade">
+            <span><b>¹</b> Speed-to-Lead Report · GoFreight 2025.</span>
+            <span><b>²</b> Operational Factors of Win Rate · Cargorates.ai 2025.</span>
+            <span><b>³</b> Rippey AI · 31 % response rate study.</span>
+          </footer>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">02 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 3 — INSIGHT (con mapa) ============ -->
+    <section class="slide s-insight" id="s3">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo II —</span>
+            <h1 class="ed-title r-rise"><em class="italic purple">La geografía</em> manda.</h1>
+            <p class="ed-standfirst r-rise-soft">Tres lecturas que cambiaron el modelo. El precio no es lineal &mdash; y no es público.</p>
+          </header>
+
+          <div class="body-layout">
+            <article class="ed-body">
+
+              <p class="r-rise-soft">
+                <span class="drop">E</span>l precio depende de <b>ruta</b>, <b>temporada</b>, <b>equipo</b> y <b>accesoriales</b> &mdash; y la combinación <em>no es lineal</em>.<span class="fn">¹</span>
+              </p>
+
+              <p class="r-rise-soft">
+                Las <b>rutas frecuentes</b> tienen un margen de confianza distinto que las <b>nuevas</b>: la incertidumbre, en este negocio, es geográfica.
+              </p>
+            </article>
+
+          <figure class="map-figure r-fade">
+            <div class="map-frame">
+              <span class="corner tl"></span><span class="corner tr"></span>
+              <span class="corner bl"></span><span class="corner br"></span>
+
+              <svg class="map" viewBox="100 395 150 100" preserveAspectRatio="xMidYMid meet">
+                <!-- Base outlines -->
+                <g class="map-base draw-line">
+                  <path d="M133.847,433.982l4.175,13.146l-1.945,1.089l0.216,2.61l3.674,2.827v5.229l4.538,4.356l-1.945-12.847l-2.593-8.497l0.648-5.877l2.161,0.217l0.865,1.962l-0.865,5.005l11.237,21.99v7.841l9.077,10.666l9.94,4.573l4.106-2.396l5.835,4.789l3.458-3.483l-1.513-3.925l4.97-1.521l1.513,0.873l1.513-1.521h2.377l4.322-7.624l-2.161-1.962l-8.428,1.962l-1.945,5.662L182.106,480l-5.834-2.396l-2.593-8.271l1.962-10.434l-4.011-2.498l-1.91-10.02l-1.599-0.683l-2.922,2.965l-3.354-1.789l-1.313-6.682l-13.286-1.393l-6.863-5.16L133.847,433.982L133.847,433.982z"/>
+                  <path d="M143.589,375.989l-0.865,3.475l-3.017-1.954h-1.504l-0.865,3.691l-10.554,23.65l2.801,20.606l3.449,1.737l0.648,5.645h7.105l6.889,5.204l13.562,1.305l1.504,6.941l2.152,1.521l3.017-3.033l2.369,1.08l2.152,9.976l3.656,2.386l3.017-5.645l9.258-6.726l6.025,2.817l5.169,0.433l0.216-3.25l10.762,0.217l2.152,2.386l0.432,5.42l-1.288,3.034l1.504,5.203h3.233l3.232-4.987l-1.288-2.386l-1.288-5.204l1.936-5.86l8.826-7.59l6.673-1.953l-0.864-6.293l9.258-9.983l9.258-1.521l-1.504-5.193l9.042-5.205v-6.94l-0.865-0.433l-3.233,1.082l-0.432,4.252l-10.745,0.129l-8.419,5.594l-13.217,4.322l-2.109-2.586l5.999-9.076l-2.965-2.826l-2.014-3.838l-4.175-3.354l-4.538-0.38l-8.575-5.852L143.589,375.989L143.589,375.989z"/>
+                </g>
+
+                <!-- Route paths (drawn) — coords adjusted to land on MX/US landmass -->
+                <g id="routes-svg">
+                  <path class="route-line draw-line" data-r="R1" d="M 163 466 Q 162.5 464.5, 162 464" />
+                  <path class="route-line draw-line" data-r="R2" d="M 168 440 Q 170 436, 170 432" />
+                  <path class="route-line draw-line" data-r="R3" d="M 138 425 Q 137.5 423.5, 137 423" />
+                  <path class="route-line draw-line" data-r="R4" d="M 170 432 Q 180 428, 190 432" />
+                  <path class="route-line draw-line" data-r="R5" d="M 165 470 Q 168 466, 171 462" />
+                  <path class="route-line draw-line" data-r="R6" d="M 152 445 Q 150 441, 149 437" />
+                </g>
+
+                <!-- Endpoint dots -->
+                <g id="route-dots" opacity="0">
+                  <circle class="route-dot" cx="163" cy="466" r="1.0"/>
+                  <circle class="route-dot" cx="162" cy="464" r="1.0"/>
+                  <circle class="route-dot" cx="168" cy="440" r="1.0"/>
+                  <circle class="route-dot" cx="170" cy="432" r="1.0"/>
+                  <circle class="route-dot" cx="138" cy="425" r="1.0"/>
+                  <circle class="route-dot" cx="137" cy="423" r="1.0"/>
+                  <circle class="route-dot" cx="190" cy="432" r="1.0"/>
+                  <circle class="route-dot" cx="165" cy="470" r="1.0"/>
+                  <circle class="route-dot" cx="171" cy="462" r="1.0"/>
+                  <circle class="route-dot" cx="152" cy="445" r="1.0"/>
+                  <circle class="route-dot" cx="149" cy="437" r="1.0"/>
+                </g>
+
+                <!-- Map labels — centered above each dot -->
+                <g id="route-labels" opacity="0">
+                  <text class="route-label" text-anchor="middle" x="138" y="421" font-style="italic">Mexicali</text>
+                  <text class="route-label" text-anchor="middle" x="170" y="428" font-style="italic">Laredo</text>
+                  <text class="route-label" text-anchor="middle" x="190" y="428" font-style="italic">Houston</text>
+                  <text class="route-label" text-anchor="middle" x="152" y="442" font-style="italic">Culiacán</text>
+                  <text class="route-label" text-anchor="middle" x="171" y="459" font-style="italic">CDMX</text>
+                </g>
+
+                <!-- Grid coordinates overlay -->
+                <g stroke="currentColor" stroke-width="0.2" opacity="0.18" style="color: var(--ink);">
+                  <line x1="100" y1="420" x2="250" y2="420" stroke-dasharray="1 2"/>
+                  <line x1="100" y1="470" x2="250" y2="470" stroke-dasharray="1 2"/>
+                  <line x1="140" y1="395" x2="140" y2="495" stroke-dasharray="1 2"/>
+                  <line x1="200" y1="395" x2="200" y2="495" stroke-dasharray="1 2"/>
+                </g>
+              </svg>
+
+              <div class="map-hand one r-fade" data-delay="2.6">rutas frecuentes,<br/>bandas distintas</div>
+              <div class="map-hand two r-fade" data-delay="2.8">cruce =<br/>cuello de<br/>botella</div>
+            </div>
+
+            <figcaption class="map-caption">
+              <em>Corredor MX-US · seis rutas con mayor volumen en el histórico.</em>
+              <span class="fig">Fig. 2 · n ≈ 3,047</span>
+            </figcaption>
+          </figure>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">03 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 4 — SOLUCIÓN ============ -->
+    <section class="slide s-solution" id="s4">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo III —</span>
+            <h1 class="ed-title r-rise"><em class="italic purple">La caja.</em></h1>
+            <p class="ed-standfirst r-rise-soft">Un motor que aprende del histórico y propone tarifa en dos segundos.</p>
+          </header>
+
+          <div class="pipeline">
+            <div class="col r-rise-soft">
+              <span class="label">Inputs</span>
+              <div class="item"><span class="n">i.</span><span>Ruta origen&thinsp;→&thinsp;destino</span></div>
+              <div class="item"><span class="n">ii.</span><span>Fecha de carga</span></div>
+              <div class="item"><span class="n">iii.</span><span>Tipo de equipo</span></div>
+              <div class="item"><span class="n">iv.</span><span>Peso · accesoriales</span></div>
+            </div>
+
+            <div class="arrow r-fade">
+              <svg viewBox="0 0 80 60" class="doodle" style="color: var(--purple);">
+                <path class="draw-line" d="M 6 30 C 28 18, 52 18, 70 30" />
+                <path class="draw-line" d="M 64 24 L 72 30 L 64 36" />
+                <text x="40" y="14" font-family="Caveat" font-size="14" fill="currentColor" stroke="none" text-anchor="middle" style="font-style: italic;">VAX</text>
+              </svg>
+            </div>
+
+            <div class="engine r-fade">
+              <span class="stamp">Motor</span>
+              <h3><em>Pricing</em></h3>
+              <p class="sub">modelo dual · banda calibrada</p>
+              <div class="latency">≈ 2 s · inferencia</div>
+            </div>
+
+            <div class="arrow r-fade">
+              <svg viewBox="0 0 80 60" class="doodle" style="color: var(--purple);">
+                <path class="draw-line" d="M 6 30 C 28 18, 52 18, 70 30" />
+                <path class="draw-line" d="M 64 24 L 72 30 L 64 36" />
+              </svg>
+            </div>
+
+            <div class="col r-rise-soft">
+              <span class="label">Outputs</span>
+              <div class="item"><span class="n">α.</span><span>Tarifa estimada</span></div>
+              <div class="item"><span class="n">β.</span><span>Banda p10&nbsp;—&nbsp;p90</span></div>
+              <div class="item"><span class="n">γ.</span><span>Margen objetivo</span></div>
+            </div>
+          </div>
+
+          <p class="figure-caption r-fade"><b>Fig. 3.</b> Flujo de inferencia. <em>El cómo se queda en la caja — el qué y el valor, afuera.</em></p>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">04 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 5 — RESULTADOS ============ -->
+    <section class="slide s-results" id="s5">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo IV —</span>
+            <h1 class="ed-title r-rise"><em class="italic purple">Lo que</em> prometemos.</h1>
+            <p class="ed-standfirst r-rise-soft">Champion v4 &middot; validación temporal con decay &middot; n&thinsp;≈&thinsp;3,047 cotizaciones.</p>
+          </header>
+
+          <div class="layout">
+            <div class="hero-stat">
+              <div class="stat-lead">
+                <span class="lead-kicker r-fade">Error promedio · venta</span>
+                <div class="big r-ink">
+                  <span class="count-up" data-from="0" data-to="10.20" data-decimals="2" data-duration="1.8">0.00</span>
+                  <span class="pct">%</span>
+                </div>
+                <p class="caption r-rise-soft"><em>Mean Absolute Percentage Error</em> sobre nueve meses de validación temporal.</p>
+              </div>
+              <div class="secondary r-rise-soft">
+                <span class="val count-up" data-from="0" data-to="0.9054" data-decimals="4" data-duration="1.8">0.0000</span>
+                <span class="lbl"><em>R²</em> &mdash; el modelo explica el 90.5&thinsp;% de la varianza observada.</span>
+              </div>
+            </div>
+
+            <div class="right-stack">
+              <div class="dual-table r-fade">
+                <span class="th">Métrica</span>
+                <span class="th" style="text-align:right;">Venta</span>
+                <span class="th" style="text-align:right;">Costo</span>
+
+                <span class="row-label">MAPE</span>
+                <span class="val">10.20 %</span>
+                <span class="val dim">11.11 %</span>
+
+                <span class="row-label">R²</span>
+                <span class="val">0.9054</span>
+                <span class="val dim">0.9057</span>
+
+                <span class="row-label">MAE (MXN)</span>
+                <span class="val">$ 4&thinsp;830</span>
+                <span class="val dim">$ 4&thinsp;201</span>
+
+                <span class="row-label">RMSE (MXN)</span>
+                <span class="val">$ 8&thinsp;459</span>
+                <span class="val dim">$ 7&thinsp;638</span>
+              </div>
+
+              <div class="band-figure r-fade">
+                <div class="figure-head">
+                  <span>Banda de confianza</span>
+                  <em>p10 — p90 · calibrada por segmento</em>
+                </div>
+                <svg viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="band-grad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="rgba(90,30,150,0.25)" />
+                      <stop offset="100%" stop-color="rgba(90,30,150,0.04)" />
+                    </linearGradient>
+                  </defs>
+                  <path id="band-upper" class="draw-line" d="M 4 18 Q 30 12, 60 16 T 130 14 T 196 12 L 196 42 Q 160 42, 130 42 T 60 44 T 4 42 Z" fill="url(#band-grad)" stroke="none"/>
+                  <path id="band-mid" class="draw-line" d="M 4 30 Q 30 26, 60 28 T 130 26 T 196 24" fill="none" stroke="#B8861A" stroke-width="1.4" stroke-linecap="round"/>
+                  <g id="band-pts" opacity="0">
+                    <!-- generated by JS -->
+                  </g>
+                </svg>
+                <div class="coverage">
+                  <span class="pct count-up" data-from="0" data-to="87.2" data-decimals="1" data-duration="1.6">0.0</span>
+                  <span class="lbl"><em>%</em> de las predicciones caen dentro de la banda &mdash; lo prometido se cumple.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="footnotes r-fade">
+            <span><b>¹</b> Champion v4 · 2026-04-27. Métricas evaluadas en split temporal con decay 60d.</span>
+            <span><b>²</b> Coverage objetivo: 80&thinsp;%. <em>Observado:</em> 87.2&thinsp;%.</span>
+          </footer>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">05 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 6 — RIGOR ============ -->
+    <section class="slide s-rigor" id="s6">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo V —</span>
+            <h1 class="ed-title r-rise">Rigor, no <em class="italic purple">suerte.</em></h1>
+            <p class="ed-standfirst r-rise-soft">Cuatro pasos. Cada decisión se prueba contra el pasado antes de tocar el futuro.</p>
+          </header>
+
+          <div class="steps">
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">i.</span>
+              <span class="title">Exploración</span>
+              <span class="desc">Diagnóstico del histórico: distribuciones, outliers, segmentación natural por ruta y equipo.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><circle cx="11" cy="11" r="6"/><path d="M21 21l-4.3-4.3"/></svg></div>
+            </div>
+
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">ii.</span>
+              <span class="title">Limpieza</span>
+              <span class="desc">Tratamiento de anomalías, normalización de unidades, consolidación del esquema.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><path d="M3 6h18M19 6l-2 14H7L5 6m5 0V4h4v2"/></svg></div>
+            </div>
+
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">iii.</span>
+              <span class="title">Features</span>
+              <span class="desc">Variables agrupadas en familias — ruta, temporal, segmento, equipo, accesoriales.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg></div>
+            </div>
+
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">iv.</span>
+              <span class="title">Entrenamiento</span>
+              <span class="desc">Split temporal con decay · banda calibrada por segmento · evaluación dual.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></div>
+            </div>
+          </div>
+
+          <footer class="footnotes r-fade">
+            <em>De CSV a modelo serializado: 5 notebooks · 11 decisiones arquitectónicas documentadas · 13 / 13 tests pasando.</em>
+          </footer>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">06 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 7 — ROADMAP ============ -->
+    <section class="slide s-roadmap" id="s7">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo VI —</span>
+            <h1 class="ed-title r-rise">Tres olas, una <em class="italic purple">visión.</em></h1>
+            <p class="ed-standfirst r-rise-soft">El motor era el primer eslabón. Y solo el primero.</p>
+          </header>
+
+          <div class="toc">
+            <div class="chapter done r-rise-soft">
+              <span class="chap-no">i</span>
+              <span class="status">Completado</span>
+              <span class="title">Motor de pricing</span>
+              <span class="desc">El modelo cotiza en producción con banda de confianza calibrada.</span>
+            </div>
+
+            <div class="chapter curr r-rise-soft">
+              <span class="chap-no">ii</span>
+              <span class="status">En curso</span>
+              <span class="title">Análisis<br/>y gestión</span>
+              <span class="desc">Capa operativa: vistas, exploración por escenarios, gestión de cartera.</span>
+              <span class="hand-mark">aquí estamos →</span>
+            </div>
+
+            <div class="chapter r-rise-soft">
+              <span class="chap-no">iii</span>
+              <span class="status">Diseño</span>
+              <span class="title">Capa<br/>conversacional</span>
+              <span class="desc">Asistencia inteligente integrada al flujo del comercial.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">07 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 8 — CIERRE ============ -->
+    <section class="slide s-close" id="s8">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <div class="colophon-stamp r-fade">— Cierre —</div>
+            <div class="ornament-top">
+              <svg viewBox="0 0 240 36" class="doodle">
+                <path class="draw-line" d="M 4 18 L 90 18 M 150 18 L 236 18" />
+                <path class="draw-line" d="M 100 18 Q 110 6, 120 18 T 140 18" />
+                <circle class="draw-line" cx="120" cy="18" r="3" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="closer">
+            <img class="logo r-fade" src="assets/vax-logo.png" alt="VAX Solutions" />
+            <h2 class="tagline tw" data-tw-text="Cotizar |em|rápido.|/em| Cotizar |em|bien.|/em| Cotizar |em|primero.|/em|"></h2>
+            <p class="hand-note r-fade" data-delay="3.4">— gracias.</p>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center; gap:18px;">
+            <div class="ornament-bot">
+              <svg viewBox="0 0 240 36" class="doodle">
+                <path class="draw-line" d="M 4 18 L 96 18" />
+                <path class="draw-line" d="M 144 18 L 236 18" />
+                <path class="draw-line" d="M 105 18 L 135 18 M 120 8 L 120 28" />
+              </svg>
+            </div>
+            <div class="footer">Reto Optimización No-Lineal · ITESM · Mayo 2026</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX · 2026</span>
+        <span class="page">08 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ PROGRESS DOTS ============ -->
+    <nav class="progress" id="progress" aria-label="Navegación"></nav>
+  </div>
+
+  <div class="hint">
+    <kbd>←</kbd><kbd>→</kbd>
+    <span>Navegar</span>
+  </div>
+</div>
+
+  <script src="scripts/gsap.min.js" defer></script>
+  <script src="scripts/counters.js" defer></script>
+  <script src="scripts/typewriter.js" defer></script>
+  <script src="scripts/timeline.js" defer></script>
+  <script src="scripts/nav.js" defer></script>
+  <script src="scripts/main.js" defer></script>
+</body>
+</html>

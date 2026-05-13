@@ -1,0 +1,59 @@
+{
+  "_note": "Coords approx. para mapa visual. count = viajes en histórico TEC Loadboard.",
+  "routes": [
+    {
+      "id": "R1",
+      "origin": "Tonalá, JAL",
+      "destination": "Zapopan, JAL",
+      "origin_xy": [42, 56],
+      "dest_xy": [40, 55],
+      "count": 438,
+      "type": "nacional"
+    },
+    {
+      "id": "R2",
+      "origin": "San Nicolás, NL",
+      "destination": "Laredo, TX",
+      "origin_xy": [52, 36],
+      "dest_xy": [55, 28],
+      "count": 219,
+      "type": "crossborder"
+    },
+    {
+      "id": "R3",
+      "origin": "Mexicali, BC",
+      "destination": "Imperial, CA",
+      "origin_xy": [15, 22],
+      "dest_xy": [16, 20],
+      "count": 227,
+      "type": "crossborder"
+    },
+    {
+      "id": "R4",
+      "origin": "Laredo, TX",
+      "destination": "Houston, TX",
+      "origin_xy": [55, 28],
+      "dest_xy": [62, 30],
+      "count": 224,
+      "type": "us-doméstico"
+    },
+    {
+      "id": "R5",
+      "origin": "Lázaro Cárdenas, MICH",
+      "destination": "Tultitlán, EDOMEX",
+      "origin_xy": [46, 70],
+      "dest_xy": [52, 60],
+      "count": 232,
+      "type": "nacional"
+    },
+    {
+      "id": "R6",
+      "origin": "Culiacán, SIN",
+      "destination": "Cd. Obregón, SON",
+      "origin_xy": [28, 42],
+      "dest_xy": [24, 36],
+      "count": 197,
+      "type": "nacional"
+    }
+  ]
+}

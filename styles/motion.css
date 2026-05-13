@@ -1,0 +1,90 @@
+/* Initial states — GSAP animates from these */
+
+.r-fade {
+  opacity: 0;
+}
+
+.r-rise {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.r-rise-soft {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.r-ink {
+  opacity: 0;
+  transform: translateY(6px);
+  filter: blur(1.5px);
+}
+
+/* Letter splitter — each .char fades quickly to mimic typewriting */
+.tw .char {
+  opacity: 0;
+  display: inline-block;
+  transform: translateY(0.08em);
+}
+
+.tw .char.space { width: 0.28em; }
+
+.tw[data-cursor="true"]::after {
+  content: "";
+  display: inline-block;
+  width: 0.06em;
+  height: 0.9em;
+  background: var(--purple);
+  margin-left: 0.04em;
+  vertical-align: -0.05em;
+  animation: blink 0.85s steps(2) infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Path drawing — strokes with dasharray controlled by JS */
+.draw-line,
+.draw-line path,
+.draw-line line,
+.draw-line polyline,
+.draw-line circle,
+.draw-line rect {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+/* Underline SVG decorations */
+.underline-stroke {
+  stroke-dasharray: var(--len, 200);
+  stroke-dashoffset: var(--len, 200);
+}
+
+/* Count-up holder */
+.count-up { font-variant-numeric: tabular-nums lining-nums; }
+
+/* Doodle paths (hand-drawn doodles) */
+.doodle path,
+.doodle line,
+.doodle polyline,
+.doodle circle,
+.doodle rect {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Pen-stroke arrows */
+.pen-arrow {
+  stroke: currentColor;
+  stroke-width: 1.6;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
