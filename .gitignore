@@ -6,3 +6,7 @@
 .u[0-9]*.png
 .playwright-mcp/
 node_modules/
+
+# Slide renders y PDFs pesados (artefactos generados)
+slide-*.png
+vax-pitch.pdf

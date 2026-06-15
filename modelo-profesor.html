@@ -1,0 +1,1336 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>VAX · Explicacion tecnica del modelo</title>
+  <meta name="description" content="VAX Pricing Engine · explicacion tecnica resumida del modelo v5" />
+  <link rel="icon" type="image/png" href="assets/vax-mark.png" />
+  <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/fraunces-italic.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/caveat.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <style>
+    @font-face {
+      font-family: "Fraunces";
+      src: url("assets/fonts/fraunces.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    @font-face {
+      font-family: "Fraunces";
+      src: url("assets/fonts/fraunces-italic.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-style: italic;
+      font-display: block;
+    }
+
+    @font-face {
+      font-family: "Caveat";
+      src: url("assets/fonts/caveat.woff2") format("woff2-variations");
+      font-weight: 400 700;
+      font-style: normal;
+      font-display: block;
+    }
+
+    @font-face {
+      font-family: "JBMono";
+      src: url("assets/fonts/jetbrains-mono.woff2") format("woff2-variations");
+      font-weight: 100 800;
+      font-style: normal;
+      font-display: block;
+    }
+
+    :root {
+      --paper: #F2EBDA;
+      --paper-warm: #ECE3CC;
+      --paper-card: #F7F1E0;
+      --ink: #1A0D35;
+      --ink-2: #2C1654;
+      --ink-soft: rgba(26, 13, 53, 0.72);
+      --ink-faint: rgba(26, 13, 53, 0.46);
+      --ink-ghost: rgba(26, 13, 53, 0.18);
+      --purple: #5A1E96;
+      --purple-soft: #7B2FBE;
+      --gold: #B8861A;
+      --gold-soft: #D4A017;
+      --crimson: #9B1B30;
+      --green: #246B4B;
+      --canvas-w: 1920px;
+      --canvas-h: 1080px;
+      --margin-x: 146px;
+      --margin-y: 92px;
+      --f-display: "Fraunces", "Times New Roman", serif;
+      --f-body: "Fraunces", Georgia, serif;
+      --f-hand: "Caveat", cursive;
+      --f-mono: "JBMono", "Courier New", monospace;
+      --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, #1A0D35 0%, #0B0615 82%);
+      color: var(--ink);
+      font-family: var(--f-body);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body { cursor: default; }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+    }
+
+    .canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: var(--canvas-w);
+      height: var(--canvas-h);
+      overflow: hidden;
+      transform-origin: 0 0;
+      background: var(--paper);
+      box-shadow:
+        0 34px 90px -26px rgba(0, 0, 0, 0.62),
+        inset 0 0 240px rgba(184, 134, 26, 0.08);
+    }
+
+    .canvas::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.5;
+      mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.84' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.10  0 0 0 0 0.05  0 0 0 0 0.18  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+    }
+
+    .canvas::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 22% 12%, rgba(184, 134, 26, 0.10), transparent 56%),
+        radial-gradient(ellipse at 86% 108%, rgba(26, 13, 53, 0.18), transparent 52%);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      padding: var(--margin-y) var(--margin-x);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity 0.55s var(--ease), transform 0.65s var(--ease), visibility 0.55s;
+    }
+
+    .slide.is-active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .folio {
+      position: absolute;
+      left: var(--margin-x);
+      right: var(--margin-x);
+      bottom: 44px;
+      z-index: 22;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .folio .page {
+      font-family: var(--f-display);
+      font-size: 14px;
+      font-style: italic;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink-soft);
+    }
+
+    .progress {
+      position: absolute;
+      z-index: 30;
+      left: 50%;
+      bottom: 14px;
+      display: flex;
+      gap: 9px;
+      transform: translateX(-50%);
+      padding: 6px 14px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: var(--ink-ghost);
+      cursor: pointer;
+      transition: all 0.35s var(--ease);
+    }
+
+    .dot.is-active {
+      width: 28px;
+      border-radius: 3px;
+      background: var(--purple);
+    }
+
+    h1,
+    h2,
+    h3,
+    p { margin: 0; }
+
+    .eyebrow {
+      font-family: var(--f-mono);
+      font-size: 13px;
+      font-weight: 550;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .title {
+      font-family: var(--f-display);
+      font-size: 118px;
+      line-height: 0.94;
+      letter-spacing: -0.018em;
+      font-variation-settings: "opsz" 144, "wght" 540;
+      color: var(--ink);
+    }
+
+    .title em,
+    .display em {
+      font-style: italic;
+      font-variation-settings: "opsz" 144, "wght" 470;
+      color: var(--purple);
+    }
+
+    .standfirst {
+      margin-top: 24px;
+      max-width: 980px;
+      font-family: var(--f-display);
+      font-size: 29px;
+      line-height: 1.32;
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .rule {
+      width: 100%;
+      height: 1px;
+      margin-top: 34px;
+      background: var(--ink-ghost);
+    }
+
+    .display {
+      font-family: var(--f-display);
+      font-size: 142px;
+      line-height: 0.9;
+      letter-spacing: -0.026em;
+      font-variation-settings: "opsz" 144, "wght" 555;
+    }
+
+    .deck-line {
+      max-width: 720px;
+      font-family: var(--f-display);
+      font-style: italic;
+      font-size: 30px;
+      line-height: 1.32;
+      color: var(--ink-soft);
+    }
+
+    .mono {
+      font-family: var(--f-mono);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .hand {
+      font-family: var(--f-hand);
+      font-size: 31px;
+      line-height: 1;
+      color: var(--purple);
+    }
+
+    .hand.small { font-size: 25px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 72px;
+      margin-top: 54px;
+      align-items: start;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 34px;
+      margin-top: 48px;
+    }
+
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 34px;
+      margin-top: 46px;
+    }
+
+    .panel {
+      position: relative;
+      min-height: 210px;
+      padding: 32px 34px;
+      border: 1px solid var(--ink-ghost);
+      background: rgba(247, 241, 224, 0.58);
+    }
+
+    .panel.tight { min-height: 0; }
+
+    .panel h3 {
+      margin-bottom: 14px;
+      font-family: var(--f-display);
+      font-size: 33px;
+      line-height: 1.05;
+      color: var(--ink);
+    }
+
+    .panel p,
+    .panel li {
+      font-size: 22px;
+      line-height: 1.38;
+      color: var(--ink-soft);
+    }
+
+    .panel b,
+    .body-text b {
+      font-weight: 650;
+      color: var(--ink);
+    }
+
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .label::before {
+      content: "";
+      width: 26px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    .body-text {
+      font-size: 28px;
+      line-height: 1.38;
+      color: var(--ink-soft);
+    }
+
+    .body-text p + p { margin-top: 24px; }
+
+    .micro {
+      font-family: var(--f-mono);
+      font-size: 12px;
+      line-height: 1.55;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 8px 13px 7px;
+      border: 1px solid var(--ink-ghost);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      white-space: nowrap;
+    }
+
+    .quote {
+      position: relative;
+      padding: 42px 44px;
+      border-left: 1px solid var(--purple);
+      background: linear-gradient(90deg, rgba(90, 30, 150, 0.07), transparent 70%);
+      font-family: var(--f-display);
+      font-size: 41px;
+      line-height: 1.16;
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .quote .hand {
+      position: absolute;
+      right: 26px;
+      bottom: 18px;
+      transform: rotate(-3deg);
+    }
+
+    .timeline {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 18px;
+      margin-top: 52px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 418px;
+      padding: 28px 22px 24px;
+      border-top: 2px solid var(--ink);
+      background: rgba(247, 241, 224, 0.48);
+    }
+
+    .step::after {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 0;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--purple);
+    }
+
+    .step .v {
+      margin-bottom: 18px;
+      font-family: var(--f-display);
+      font-size: 46px;
+      line-height: 1;
+      font-style: italic;
+      color: var(--purple);
+    }
+
+    .step h3 {
+      min-height: 68px;
+      margin-bottom: 14px;
+      font-family: var(--f-display);
+      font-size: 29px;
+      line-height: 1.08;
+    }
+
+    .step p {
+      font-size: 19px;
+      line-height: 1.33;
+      color: var(--ink-soft);
+    }
+
+    .step .metric {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 22px;
+      padding-top: 14px;
+      border-top: 1px solid var(--ink-ghost);
+      font-family: var(--f-mono);
+      font-size: 12px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: 1.25fr repeat(6, 1fr);
+      gap: 0;
+      margin-top: 42px;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+    }
+
+    .metric-strip div {
+      min-height: 132px;
+      padding: 23px 20px;
+      border-right: 1px solid var(--ink-ghost);
+    }
+
+    .metric-strip div:last-child { border-right: 0; }
+
+    .metric-strip .head {
+      font-family: var(--f-display);
+      font-size: 31px;
+      line-height: 1.08;
+      font-style: italic;
+      color: var(--purple);
+    }
+
+    .metric-strip .num {
+      display: block;
+      margin-bottom: 8px;
+      font-family: var(--f-display);
+      font-size: 40px;
+      line-height: 1;
+      color: var(--ink);
+    }
+
+    .metric-strip .cap {
+      display: block;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 42px;
+      margin-top: 46px;
+      align-items: stretch;
+    }
+
+    .band-card {
+      min-height: 420px;
+      padding: 35px 38px;
+      border: 1px solid var(--ink-ghost);
+      background: rgba(247, 241, 224, 0.62);
+    }
+
+    .band-card h3 {
+      font-family: var(--f-display);
+      font-size: 43px;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .band-card .big {
+      margin-top: 22px;
+      font-family: var(--f-display);
+      font-size: 84px;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--purple);
+    }
+
+    .band-card .small {
+      margin-top: 16px;
+      font-size: 22px;
+      line-height: 1.35;
+      color: var(--ink-soft);
+    }
+
+    .mini-chart {
+      width: 100%;
+      height: 140px;
+      margin-top: 20px;
+      overflow: visible;
+    }
+
+    .mini-chart .axis,
+    .mini-chart .guide {
+      stroke: var(--ink-ghost);
+      stroke-width: 1.2;
+    }
+
+    .mini-chart .band-wide {
+      fill: rgba(90, 30, 150, 0.18);
+      stroke: rgba(90, 30, 150, 0.55);
+      stroke-width: 1.3;
+    }
+
+    .mini-chart .band-tight {
+      fill: rgba(184, 134, 26, 0.20);
+      stroke: rgba(184, 134, 26, 0.75);
+      stroke-width: 1.3;
+    }
+
+    .mini-chart .mid {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 2.2;
+    }
+
+    .formula {
+      margin-top: 26px;
+      padding: 28px 32px;
+      border: 1px solid var(--ink-ghost);
+      background: rgba(255, 255, 255, 0.15);
+      font-family: var(--f-display);
+      font-size: 36px;
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    .formula span {
+      color: var(--purple);
+      font-style: normal;
+    }
+
+    .segment-table {
+      display: grid;
+      grid-template-columns: 1.35fr 0.8fr 0.8fr 0.9fr 1.1fr;
+      margin-top: 42px;
+      border-top: 1px solid var(--ink);
+      border-left: 1px solid var(--ink-ghost);
+    }
+
+    .segment-table div {
+      min-height: 74px;
+      padding: 19px 18px;
+      border-right: 1px solid var(--ink-ghost);
+      border-bottom: 1px solid var(--ink-ghost);
+      font-size: 21px;
+      line-height: 1.24;
+      color: var(--ink-soft);
+    }
+
+    .segment-table .th {
+      min-height: 56px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      background: rgba(26, 13, 53, 0.035);
+    }
+
+    .segment-table b { color: var(--ink); }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status.ok { color: var(--green); }
+    .status.watch { color: var(--gold); }
+    .status.risk { color: var(--crimson); }
+
+    .notebook-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      margin-top: 48px;
+    }
+
+    .file-card {
+      min-height: 148px;
+      padding: 24px 26px;
+      border-top: 1px solid var(--ink);
+      background: rgba(247, 241, 224, 0.55);
+    }
+
+    .file-card code {
+      display: block;
+      margin-bottom: 13px;
+      font-family: var(--f-mono);
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      color: var(--purple);
+    }
+
+    .file-card p {
+      font-size: 21px;
+      line-height: 1.34;
+      color: var(--ink-soft);
+    }
+
+    .doodle {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.1;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      gap: 78px;
+      height: 100%;
+    }
+
+    .cover-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 34px;
+    }
+
+    .cover-top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--ink-ghost);
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    .cover-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+      padding-left: 68px;
+      border-left: 1px solid var(--ink-ghost);
+    }
+
+    .cover-map {
+      position: relative;
+      height: 450px;
+      border: 1px solid var(--ink-ghost);
+      background:
+        linear-gradient(rgba(26, 13, 53, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26, 13, 53, 0.035) 1px, transparent 1px);
+      background-size: 44px 44px;
+      display: grid;
+      place-items: center;
+    }
+
+    .cover-map img {
+      width: 80%;
+      max-height: 76%;
+      opacity: 0.42;
+      filter: sepia(0.1) contrast(1.1);
+    }
+
+    .cover-map svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      color: var(--purple);
+    }
+
+    .cover-note {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: rotate(-2deg);
+      color: var(--purple);
+    }
+
+    .decision-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .decision {
+      min-height: 190px;
+      padding: 30px 32px;
+      border-left: 2px solid var(--purple);
+      background: rgba(90, 30, 150, 0.065);
+    }
+
+    .decision h3 {
+      margin-bottom: 12px;
+      font-family: var(--f-display);
+      font-size: 34px;
+      line-height: 1.05;
+    }
+
+    .decision p {
+      font-size: 23px;
+      line-height: 1.34;
+      color: var(--ink-soft);
+    }
+
+    .speaker {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 84px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 24px;
+      align-items: start;
+      padding-top: 22px;
+      border-top: 1px solid var(--ink-ghost);
+    }
+
+    .speaker .tag {
+      font-family: var(--f-mono);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .speaker p {
+      max-width: 1120px;
+      font-size: 24px;
+      line-height: 1.35;
+      color: var(--ink-soft);
+    }
+
+    .u-purple { color: var(--purple); }
+    .u-gold { color: var(--gold); }
+    .u-crimson { color: var(--crimson); }
+
+    .s-close .decision-list {
+      margin-top: 38px;
+      gap: 26px;
+    }
+
+    .s-close .decision {
+      min-height: 135px;
+      padding: 24px 28px;
+    }
+
+    .s-close .decision h3 {
+      margin-bottom: 8px;
+      font-size: 30px;
+    }
+
+    .s-close .decision p {
+      font-size: 21px;
+      line-height: 1.28;
+    }
+
+    .s-close .speaker {
+      bottom: 72px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slide,
+      .dot { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <main class="canvas" id="canvas" aria-live="polite">
+      <section class="slide is-active" id="s1">
+        <div class="frame">
+          <div class="cover-top">
+            <span>VAX · Pricing Engine · Modelo v5</span>
+            <span>Mayo 2026 · Explicacion tecnica</span>
+          </div>
+
+          <div class="cover-grid">
+            <div class="cover-left">
+              <span class="eyebrow">Reto Optimizacion No-Lineal</span>
+              <h1 class="display">Que hicimos con <em>el modelo</em>.</h1>
+              <p class="deck-line">Versiones probadas, cambios tecnicos, metricas finales y por que nos quedamos con intervalos p10/p90.</p>
+              <div class="cover-note">
+                <svg width="58" height="28" viewBox="0 0 58 28" class="doodle" aria-hidden="true">
+                  <path d="M3 20 C13 6, 31 3, 49 12 M49 12 L41 7 M49 12 L43 19" />
+                </svg>
+                <span class="hand">guion directo para explicarlo</span>
+              </div>
+            </div>
+
+            <aside class="cover-right">
+              <div class="cover-map" aria-label="Mapa conceptual de rutas">
+                <img src="assets/maps/northamerica.svg" alt="" />
+                <svg viewBox="0 0 520 450" aria-hidden="true">
+                  <path class="doodle" d="M130 282 Q230 190, 390 210" />
+                  <path class="doodle" d="M180 330 Q250 275, 335 300" />
+                  <path class="doodle" d="M105 248 Q155 226, 220 250" />
+                  <g fill="currentColor">
+                    <circle cx="130" cy="282" r="6" />
+                    <circle cx="390" cy="210" r="6" />
+                    <circle cx="180" cy="330" r="6" />
+                    <circle cx="335" cy="300" r="6" />
+                    <circle cx="105" cy="248" r="6" />
+                    <circle cx="220" cy="250" r="6" />
+                  </g>
+                </svg>
+              </div>
+              <p class="micro">La tesis: no basta con kilometros. La incertidumbre tambien depende de ruta, equipo, direccion y recencia.</p>
+            </aside>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · 2026</span><span class="page">01 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s2">
+        <div class="frame">
+          <span class="eyebrow">Capitulo I · Pipeline</span>
+          <h2 class="title">La evidencia salio de <em>notebooks</em> y QMDs.</h2>
+          <p class="standfirst">Usamos los notebooks para explorar y los QMDs para dejar trazabilidad: que se probo, que cambio y que se reporta.</p>
+          <div class="rule"></div>
+
+          <div class="notebook-map">
+            <article class="file-card">
+              <code>02_eda / docs/decisions/006</code>
+              <p>Detectamos rutas repetidas, outliers de precio, diferencias por direccion y segmentos con poca muestra.</p>
+            </article>
+            <article class="file-card">
+              <code>04_baseline.qmd</code>
+              <p>Comparamos medianas, lineales y arboles. La relacion era no lineal, asi que LightGBM quedo como base.</p>
+            </article>
+            <article class="file-card">
+              <code>05_tuning.qmd</code>
+              <p>Ajustamos validacion temporal, recency weights, transformacion log y modelos cuantiles.</p>
+            </article>
+            <article class="file-card">
+              <code>06_route_features.qmd</code>
+              <p>Probamos distancia real, duracion, casetas y elevacion. En v5, duracion fue la variable de ruta mas fuerte.</p>
+            </article>
+          </div>
+
+          <div class="speaker">
+            <span class="tag">Como decirlo</span>
+            <p>No fue solo entrenar un modelo: cada QMD amarra una decision. Si una variable no mejoraba validacion temporal o aumentaba ruido, no se promovia al modelo final.</p>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · trazabilidad</span><span class="page">02 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s3">
+        <div class="frame">
+          <span class="eyebrow">Capitulo II · Versiones</span>
+          <h2 class="title">Que cambio <em>en cada version</em>.</h2>
+          <p class="standfirst">La mejora no fue una sola idea. Fue ir corrigiendo sesgos de datos, validacion y representacion de ruta.</p>
+
+          <div class="timeline">
+            <article class="step">
+              <div class="v">B</div>
+              <h3>Baseline</h3>
+              <p>Mediana global, mediana por segmento, lineal + OHE y LightGBM simple.</p>
+              <div class="metric">Sirvio como piso.</div>
+            </article>
+            <article class="step">
+              <div class="v">v1</div>
+              <h3>FTL + log target</h3>
+              <p>Target encoding, clipping y conformal inicial. Funcionaba, pero aun mezclaba ruido.</p>
+              <div class="metric">MAPE venta 11.82%</div>
+            </article>
+            <article class="step">
+              <div class="v">v2</div>
+              <h3>Recencia + ensemble</h3>
+              <p>Entrenamos con meses recientes, ensemble y bandas por segmento.</p>
+              <div class="metric">MAPE venta 10.55%</div>
+            </article>
+            <article class="step">
+              <div class="v">v3</div>
+              <h3>Outliers reales</h3>
+              <p>Dejamos de clippear p1/p99: se removieron casos extremos en vez de inventar limites.</p>
+              <div class="metric">MAPE venta 9.59%</div>
+            </article>
+            <article class="step">
+              <div class="v">v4</div>
+              <h3>Ruta por carretera</h3>
+              <p>Sustituimos distancia recta por distancia operativa. Baja algo la metrica, sube fidelidad.</p>
+              <div class="metric">Venta 10.20% · costo 11.11%</div>
+            </article>
+            <article class="step">
+              <div class="v">v5</div>
+              <h3>Features de ruta</h3>
+              <p>Duracion, casetas y elevacion. Para costo, solo duracion sobrevivio la ablacion.</p>
+              <div class="metric">Modelo final.</div>
+            </article>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · versiones</span><span class="page">03 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s4">
+        <div class="frame">
+          <span class="eyebrow">Capitulo III · Por que LightGBM</span>
+          <h2 class="title">El precio no se comporta como <em>linea recta</em>.</h2>
+          <p class="standfirst">Las relaciones relevantes son interacciones: origen, destino, equipo, direccion, accesoriales y recencia cambian juntos.</p>
+
+          <div class="two-col">
+            <article class="body-text">
+              <p><b>Modelos lineales.</b> Fueron utiles para auditar variables, pero castigaban rutas raras y no capturaban saltos por equipo o frontera.</p>
+              <p><b>Arboles boosting.</b> Permitieron capturar cortes no lineales sin exigir que nosotros fijaramos todas las interacciones manualmente.</p>
+              <p><b>Validacion temporal.</b> Evaluamos en datos posteriores, porque el objetivo real es cotizar embarques futuros, no memorizar el historico.</p>
+            </article>
+
+            <aside class="quote">
+              La metrica tenia que castigar el error comercial, no premiar explicacion aparente.
+              <span class="hand">por eso R2 queda secundario</span>
+            </aside>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · criterio de modelo</span><span class="page">04 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s5">
+        <div class="frame">
+          <span class="eyebrow">Capitulo IV · Modelo final v5</span>
+          <h2 class="title">Que decidimos dejar <em>adentro</em>.</h2>
+          <p class="standfirst">El modelo final predice precio central y tambien genera una banda p10/p90 para comunicar incertidumbre.</p>
+
+          <div class="three-col">
+            <article class="panel">
+              <span class="label">Datos</span>
+              <h3>FTL</h3>
+              <p>Trabajamos el problema como pricing de cargas completas, separando venta y costo para no mezclar objetivos.</p>
+            </article>
+            <article class="panel">
+              <span class="label">Target</span>
+              <h3>Venta y costo</h3>
+              <p>Entrenamos modelos separados: venta explica precio al cliente; costo explica compra operacional.</p>
+            </article>
+            <article class="panel">
+              <span class="label">Ruta</span>
+              <h3>Duracion real</h3>
+              <p>En v5, <b>duration_min</b> fue la senal mas estable. Casetas/elevacion no se quedaron para costo.</p>
+            </article>
+          </div>
+
+          <div class="grid-2x2">
+            <article class="panel tight">
+              <span class="label">Validacion</span>
+              <p>Holdout temporal para simular produccion: entrenar con pasado, evaluar contra futuro.</p>
+            </article>
+            <article class="panel tight">
+              <span class="label">Intervalos</span>
+              <p>Quantile models + calibracion conformal segmentada para p10/p90.</p>
+            </article>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · v5</span><span class="page">05 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s6">
+        <div class="frame">
+          <span class="eyebrow">Capitulo V · Metricas finales</span>
+          <h2 class="title">El modelo central <em>si es bueno</em>.</h2>
+          <p class="standfirst">La prediccion puntual mejoro y queda en un rango razonable para pricing logistico. R2 se reporta solo como referencia.</p>
+
+          <div class="metric-strip">
+            <div class="head">Venta<br />v5</div>
+            <div><span class="num">9.73%</span><span class="cap">MAPE</span></div>
+            <div><span class="num">9.76%</span><span class="cap">WAPE</span></div>
+            <div><span class="num">$4.5k</span><span class="cap">MAE</span></div>
+            <div><span class="num">77.5%</span><span class="cap">Dentro ±15%</span></div>
+            <div><span class="num">68.5%</span><span class="cap">Coverage p10/p90</span></div>
+            <div><span class="num">0.921</span><span class="cap">R2 secundario</span></div>
+          </div>
+
+          <div class="metric-strip">
+            <div class="head">Costo<br />v5</div>
+            <div><span class="num">11.03%</span><span class="cap">MAPE</span></div>
+            <div><span class="num">10.68%</span><span class="cap">WAPE</span></div>
+            <div><span class="num">$4.1k</span><span class="cap">MAE</span></div>
+            <div><span class="num">74.8%</span><span class="cap">Dentro ±15%</span></div>
+            <div><span class="num">73.0%</span><span class="cap">Coverage p10/p90</span></div>
+            <div><span class="num">0.914</span><span class="cap">R2 secundario</span></div>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · metricas</span><span class="page">06 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s7">
+        <div class="frame">
+          <span class="eyebrow">Capitulo VI · Que significa cada metrica</span>
+          <h2 class="title">R2 no fue la metrica principal.</h2>
+          <p class="standfirst">El profesor tiene razon: R2 puede inflarse al agregar variables. Por eso usamos metricas de error y tolerancia.</p>
+
+          <div class="grid-2x2">
+            <article class="panel">
+              <span class="label">MAE / RMSE</span>
+              <h3>Error en pesos</h3>
+              <p>MAE dice cuanto nos equivocamos en promedio. RMSE castiga mas los errores grandes.</p>
+            </article>
+            <article class="panel">
+              <span class="label">MAPE / WAPE</span>
+              <h3>Error relativo</h3>
+              <p>MAPE promedia porcentajes por embarque. WAPE pondera por monto y es mas estable con tickets grandes.</p>
+            </article>
+            <article class="panel">
+              <span class="label">Within ±15%</span>
+              <h3>Utilidad comercial</h3>
+              <p>Pregunta practica: en cuantos embarques la prediccion cae dentro de una tolerancia negociable.</p>
+            </article>
+            <article class="panel">
+              <span class="label">p10/p90</span>
+              <h3>Incertidumbre</h3>
+              <p>No es exactitud puntual; es si la banda contiene el valor real y que tan amplia queda.</p>
+            </article>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · lectura de metricas</span><span class="page">07 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s8">
+        <div class="frame">
+          <span class="eyebrow">Capitulo VII · Decision p10/p90</span>
+          <h2 class="title">Nos quedamos con <em>p10/p90</em>.</h2>
+          <p class="standfirst">p05/p95 se veia mas seguro, pero era una banda demasiado amplia para cotizar. p10/p90 es mas accionable.</p>
+
+          <div class="comparison">
+            <article class="band-card">
+              <h3>p05/p95 legacy</h3>
+              <p class="micro">Intervalo muy conservador</p>
+              <svg class="mini-chart" viewBox="0 0 520 140" aria-hidden="true">
+                <line class="axis" x1="10" y1="118" x2="510" y2="118" />
+                <path class="band-wide" d="M20 104 C100 72, 170 54, 245 58 S390 38, 500 34 L500 116 C390 101, 320 100, 245 111 S100 112, 20 122 Z" />
+                <path class="mid" d="M20 112 C118 91, 178 82, 245 84 S388 71, 500 70" />
+              </svg>
+              <div class="big">~88%</div>
+              <p class="small">Coverage observado alto, pero banda mediana cercana a 39%. Era dificil convertirlo en una cotizacion defendible.</p>
+            </article>
+
+            <article class="band-card">
+              <h3>p10/p90 final</h3>
+              <p class="micro">Intervalo mas comercial</p>
+              <svg class="mini-chart" viewBox="0 0 520 140" aria-hidden="true">
+                <line class="axis" x1="10" y1="118" x2="510" y2="118" />
+                <path class="band-tight" d="M20 102 C110 84, 178 76, 245 78 S390 66, 500 65 L500 94 C390 91, 320 94, 245 98 S110 104, 20 113 Z" />
+                <path class="mid" d="M20 107 C110 94, 178 88, 245 88 S390 80, 500 79" />
+              </svg>
+              <div class="big">68-73%</div>
+              <p class="small">Coverage observado menor al 80% nominal, pero banda mediana baja a 17.1% venta y 22.1% costo.</p>
+            </article>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · p10/p90</span><span class="page">08 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s9">
+        <div class="frame">
+          <span class="eyebrow">Capitulo VIII · Coverage y banda</span>
+          <h2 class="title">La banda responde dos preguntas.</h2>
+          <p class="standfirst">Coverage mide si el real cae dentro del intervalo. La banda mediana mide que tan ancho es ese intervalo.</p>
+
+          <div class="two-col">
+            <article>
+              <div class="formula">Coverage = <span>real entre p10 y p90</span></div>
+              <div class="formula">Banda % = <span>(p90 - p10) / prediccion</span></div>
+              <p class="body-text" style="margin-top: 30px;">Una banda puede tener mucho coverage porque es gigante. Eso no necesariamente es mejor para negocio.</p>
+            </article>
+
+            <aside class="panel" style="min-height: 520px;">
+              <span class="label">Ejemplo verbal</span>
+              <h3>Precio central: $50,000</h3>
+              <p>Si p10=$45,000 y p90=$55,000, la banda mide 20%. Si el real fue $52,000, cuenta como cubierto.</p>
+              <p style="margin-top: 22px;">Si hacemos p05/p95, probablemente cubre mas casos, pero puede decir "$40k a $60k". Es menos util para decidir precio.</p>
+              <div class="hand" style="margin-top: 28px;">mas cobertura no siempre es mejor</div>
+            </aside>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · incertidumbre</span><span class="page">09 / 11</span></div>
+      </section>
+
+      <section class="slide" id="s10">
+        <div class="frame">
+          <span class="eyebrow">Capitulo IX · Diagnostico por segmento</span>
+          <h2 class="title">El promedio no cuenta <em>toda</em> la historia.</h2>
+          <p class="standfirst">El modelo se debe usar con confianza por segmento. Algunas rutas ya son buenas; otras requieren bandera de baja confianza.</p>
+
+          <div class="segment-table">
+            <div class="th">Segmento</div>
+            <div class="th">MAPE venta</div>
+            <div class="th">Within ±15%</div>
+            <div class="th">Coverage</div>
+            <div class="th">Lectura</div>
+
+            <div><b>National · DryVan</b></div>
+            <div>8.34%</div>
+            <div>83.0%</div>
+            <div>76.7%</div>
+            <div><span class="status ok">usable</span></div>
+
+            <div><b>Crossborder · DryVan</b></div>
+            <div>7.63%</div>
+            <div>90.1%</div>
+            <div>61.1%</div>
+            <div><span class="status watch">banda estrecha</span></div>
+
+            <div><b>Domestic · Reefer</b></div>
+            <div>muestra baja</div>
+            <div>variable</div>
+            <div>muy bajo</div>
+            <div><span class="status risk">baja confianza</span></div>
+          </div>
+
+          <div class="speaker">
+            <span class="tag">Decision</span>
+            <p>No ocultamos esos casos. El entregable propone reportar metricas segmentadas y activar banderas cuando la ruta/equipo tenga poca evidencia historica.</p>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · segmentos</span><span class="page">10 / 11</span></div>
+      </section>
+
+      <section class="slide s-close" id="s11">
+        <div class="frame">
+          <span class="eyebrow">Capitulo X · Cierre</span>
+          <h2 class="title">La conclusion para el profesor.</h2>
+          <p class="standfirst">El modelo es bueno para prediccion central; la banda p10/p90 es util, pero se reporta honestamente con coverage observado.</p>
+
+          <div class="decision-list">
+            <article class="decision">
+              <h3>Que intentamos</h3>
+              <p>Baselines, modelos lineales, LightGBM, limpieza de outliers, validacion temporal, features geograficas y cuantiles.</p>
+            </article>
+            <article class="decision">
+              <h3>Que decidimos</h3>
+              <p>v5 con LightGBM, recencia, duracion de ruta y bandas p10/p90 para reportar incertidumbre.</p>
+            </article>
+            <article class="decision">
+              <h3>Por que</h3>
+              <p>Reduce error comercial, evita depender de R2 y comunica incertidumbre con una banda mas accionable.</p>
+            </article>
+            <article class="decision">
+              <h3>Que falta</h3>
+              <p>Recalibrar coverage por segmento, monitorear drift mensual y marcar baja confianza en segmentos con poca muestra.</p>
+            </article>
+          </div>
+
+          <div class="speaker">
+            <span class="tag">Frase final</span>
+            <p>El resultado no se vende como perfecto: se vende como un modelo operativo, medible y honesto. Predice razonablemente bien y sabe decir cuando su intervalo no esta tan calibrado como quisieramos.</p>
+          </div>
+        </div>
+        <div class="folio"><span>VAX · cierre</span><span class="page">11 / 11</span></div>
+      </section>
+
+      <nav class="progress" id="progress" aria-label="Progreso de diapositivas"></nav>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const CANVAS_W = 1920;
+      const CANVAS_H = 1080;
+      const canvas = document.getElementById("canvas");
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const progress = document.getElementById("progress");
+      let current = 0;
+
+      function fit() {
+        const scale = Math.min(window.innerWidth / CANVAS_W, window.innerHeight / CANVAS_H);
+        const x = (window.innerWidth - CANVAS_W * scale) / 2;
+        const y = (window.innerHeight - CANVAS_H * scale) / 2;
+        canvas.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+      }
+
+      function syncProgress() {
+        progress.querySelectorAll(".dot").forEach((dot, index) => {
+          dot.classList.toggle("is-active", index === current);
+        });
+      }
+
+      function go(index) {
+        if (index < 0 || index >= slides.length || index === current) return;
+        slides[current].classList.remove("is-active");
+        current = index;
+        slides[current].classList.add("is-active");
+        syncProgress();
+      }
+
+      function buildProgress() {
+        slides.forEach((_, index) => {
+          const dot = document.createElement("button");
+          dot.className = "dot" + (index === 0 ? " is-active" : "");
+          dot.type = "button";
+          dot.setAttribute("aria-label", `Ir a slide ${index + 1}`);
+          dot.addEventListener("click", (event) => {
+            event.stopPropagation();
+            go(index);
+          });
+          progress.appendChild(dot);
+        });
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") {
+          event.preventDefault();
+          go(current + 1);
+        }
+
+        if (event.key === "ArrowLeft" || event.key === "PageUp") {
+          event.preventDefault();
+          go(current - 1);
+        }
+
+        if (event.key === "Home") {
+          event.preventDefault();
+          go(0);
+        }
+
+        if (event.key === "End") {
+          event.preventDefault();
+          go(slides.length - 1);
+        }
+
+        if (event.key === "f" || event.key === "F") {
+          if (document.fullscreenElement) document.exitFullscreen?.();
+          else document.documentElement.requestFullscreen?.();
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        if (event.target.closest("button, a, .progress")) return;
+        if (event.clientX > window.innerWidth / 2) go(current + 1);
+        else go(current - 1);
+      });
+
+      window.addEventListener("resize", fit, { passive: true });
+      buildProgress();
+      fit();
+    })();
+  </script>
+</body>
+</html>

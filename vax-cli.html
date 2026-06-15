@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>VAX · CLI Overview · Mayo 2026</title>
+  <meta name="description" content="VAX CLI · VAX Pricing Engine · Reto Optimización No-Lineal · ITESM" />
+  <link rel="icon" type="image/png" href="assets/vax-mark.png" />
+  <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/fraunces-italic.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/caveat.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles/main.css?v=8" />
+  <link rel="stylesheet" href="styles/sections.css?v=8" />
+  <link rel="stylesheet" href="styles/motion.css?v=8" />
+  <style>
+    .terminal-card {
+      border: 1px solid var(--ink);
+      background: #150a2c;
+      color: var(--paper-cool);
+      box-shadow: 7px 7px 0 var(--ink-ghost);
+      font-family: var(--f-mono);
+      overflow: hidden;
+    }
+
+    .terminal-card .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 22px;
+      border-bottom: 1px solid rgba(246, 240, 223, 0.16);
+      color: rgba(246, 240, 223, 0.62);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .terminal-card .lights {
+      display: flex;
+      gap: 8px;
+    }
+
+    .terminal-card .lights span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(246, 240, 223, 0.36);
+    }
+
+    .terminal-card pre {
+      margin: 0;
+      padding: 28px 32px 32px;
+      font-size: 20px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .terminal-card .prompt { color: var(--gold-soft); }
+    .terminal-card .cmd { color: #f7f1e0; }
+    .terminal-card .out { color: rgba(246, 240, 223, 0.68); }
+    .terminal-card .ok { color: #d4a017; }
+
+    .cli-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 26px;
+      align-self: center;
+    }
+
+    .cli-tile {
+      border-top: 1px solid var(--ink-ghost);
+      padding-top: 24px;
+      min-height: 154px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .cli-tile .name {
+      font-family: var(--f-mono);
+      font-size: 13px;
+      letter-spacing: 0.20em;
+      text-transform: uppercase;
+      color: var(--purple);
+    }
+
+    .cli-tile .desc {
+      font-family: var(--f-display);
+      font-size: 25px;
+      line-height: 1.18;
+      color: var(--ink);
+    }
+
+    .cli-tile .meta {
+      font-family: var(--f-body);
+      font-size: 17px;
+      line-height: 1.44;
+      color: var(--ink-soft);
+    }
+
+    .arch {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 20px;
+      align-items: center;
+      align-self: center;
+    }
+
+    .arch-node {
+      border: 1px solid var(--ink-ghost);
+      background: var(--paper-card);
+      padding: 28px 22px;
+      min-height: 180px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: inset 0 0 70px rgba(184, 134, 26, 0.08);
+    }
+
+    .arch-node strong {
+      font-family: var(--f-display);
+      font-size: 30px;
+      line-height: 1.04;
+      color: var(--ink);
+      font-weight: 560;
+    }
+
+    .arch-node span {
+      font-family: var(--f-body);
+      font-size: 16px;
+      line-height: 1.38;
+      color: var(--ink-soft);
+    }
+
+    .arch-arrow {
+      font-family: var(--f-hand);
+      font-size: 34px;
+      color: var(--purple);
+      text-align: center;
+    }
+
+    .callout-row {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: var(--gutter);
+      align-items: center;
+      min-height: 0;
+    }
+
+    .command-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .command-list .line {
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 22px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--ink-ghost);
+      align-items: baseline;
+    }
+
+    .command-list code {
+      font-family: var(--f-mono);
+      color: var(--purple);
+      font-size: 17px;
+    }
+
+    .command-list span {
+      font-family: var(--f-body);
+      color: var(--ink-soft);
+      font-size: 18px;
+      line-height: 1.36;
+    }
+
+    .demo-script {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: var(--gutter);
+      align-items: center;
+      min-height: 0;
+    }
+
+    .demo-script .cue {
+      font-family: var(--f-display);
+      font-style: italic;
+      color: var(--ink-soft);
+      font-size: 24px;
+      line-height: 1.4;
+      padding-left: 28px;
+      border-left: 1px solid var(--ink-ghost);
+    }
+
+    .small-foot {
+      font-family: var(--f-display);
+      font-style: italic;
+      color: var(--ink-soft);
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="canvas" id="canvas">
+
+    <!-- ============ SLIDE 1 — COVER ============ -->
+    <section class="slide s-cover is-active" id="s1">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <div class="issue r-fade">
+            <div class="label">VAX · CLI · Overview</div>
+            <div class="issue-no">Vol. 02 — Mayo 2026</div>
+          </div>
+
+          <div class="lede">
+            <span class="kicker r-fade">Reto Optimización No-Lineal</span>
+            <h1 class="title tw" data-tw-text='Del modelo al |em|comando.|/em|'></h1>
+            <p class="deck-line r-rise-soft">Cómo el equipo comercial puede cotizar, auditar y operar VAX desde terminal.</p>
+            <div class="corner-hand r-fade" data-delay="2.4">
+              <svg width="48" height="20" viewBox="0 0 48 20" class="doodle">
+                <path d="M 2 14 C 10 6, 20 4, 32 8 L 28 4 M 32 8 L 28 12" />
+              </svg>
+              <span>después: demo en vivo</span>
+            </div>
+          </div>
+
+          <aside class="aside r-fade">
+            <figure class="figure">
+              <div class="terminal-card">
+                <div class="bar">
+                  <div class="lights"><span></span><span></span><span></span></div>
+                  <span>vax-cli</span>
+                </div>
+                <pre><span class="prompt">$</span> <span class="cmd">vax quote --dual</span>
+<span class="out">Origen: Apodaca, NL
+Destino: Laredo, TX
+Equipo: DryVan 53</span>
+<span class="ok">Venta: $43,820 · margen 18.7%</span></pre>
+              </div>
+            </figure>
+            <figcaption><b>Figura 1.</b> El mismo pricing engine, pero en formato <em>scriptable</em>, rápido y auditable.</figcaption>
+          </aside>
+
+          <div class="colophon r-fade">
+            <div class="left">
+              <span>Equipo · VAX</span>
+              <span>CLI · MCP · Agente</span>
+            </div>
+            <div class="right">
+              <em>8 capítulos · puente a terminal</em>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">01 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 2 — POR QUÉ CLI ============ -->
+    <section class="slide s-pain" id="s2">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo I —</span>
+            <h1 class="ed-title r-rise"><em class="italic purple">Por qué</em> terminal.</h1>
+            <p class="ed-standfirst r-rise-soft">La terminal convierte el motor en una herramienta directa: sin navegar pantallas, sin copiar datos entre sistemas.</p>
+          </header>
+
+          <div class="panels">
+            <div class="panel left">
+              <span class="role r-fade">Antes</span>
+              <div class="big-number r-ink">
+                <span>UI</span>
+                <span class="unit">primero</span>
+              </div>
+              <p class="caption r-rise-soft">
+                El usuario entra al SaaS, llena campos, guarda o revisa desde vistas específicas.
+              </p>
+              <span class="hand r-fade" data-delay="2">— bueno para operar visualmente.</span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="panel right">
+              <span class="role r-fade">Con CLI</span>
+              <div class="big-number r-ink">
+                <span>1</span>
+                <span class="unit">comando</span>
+              </div>
+              <p class="caption r-rise-soft">
+                Cotiza, guarda, lista, registra feedback o diagnostica el backend desde el flujo de trabajo real.
+              </p>
+              <span class="hand r-fade" data-delay="2.2">— ideal para demo, scripts y automatización.</span>
+            </div>
+          </div>
+
+          <footer class="footnotes r-fade">
+            <span><b>¹</b> El CLI no reemplaza la app: expone el mismo backend en una interfaz de bajo overhead.</span>
+            <span><b>²</b> La autenticación y los perfiles locales permiten alternar entornos sin tocar código.</span>
+          </footer>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">02 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 3 — COMANDOS ============ -->
+    <section class="slide s-insight" id="s3">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo II —</span>
+            <h1 class="ed-title r-rise">El mapa de <em class="italic purple">comandos.</em></h1>
+            <p class="ed-standfirst r-rise-soft">El binario principal se llama <code>vax</code>. Todo cuelga de siete superficies simples.</p>
+          </header>
+
+          <div class="cli-grid">
+            <div class="cli-tile r-rise-soft">
+              <span class="name">login</span>
+              <span class="desc">Autentica el usuario.</span>
+              <span class="meta">Browser login o fallback con email y contraseña.</span>
+            </div>
+            <div class="cli-tile r-rise-soft">
+              <span class="name">quote</span>
+              <span class="desc">Cotiza una carga.</span>
+              <span class="meta">Wizard interactivo, flags, JSON o salida numérica.</span>
+            </div>
+            <div class="cli-tile r-rise-soft">
+              <span class="name">quotes</span>
+              <span class="desc">Opera el historial.</span>
+              <span class="meta">Lista, detalle, feedback y cambios de estado.</span>
+            </div>
+            <div class="cli-tile r-rise-soft">
+              <span class="name">whoami</span>
+              <span class="desc">Confirma sesión.</span>
+              <span class="meta">Usuario, rol, provider, backend y perfil activo.</span>
+            </div>
+            <div class="cli-tile r-rise-soft">
+              <span class="name">doctor</span>
+              <span class="desc">Diagnostica salud.</span>
+              <span class="meta">Conectividad, token, permisos y auth contra backend.</span>
+            </div>
+            <div class="cli-tile r-rise-soft">
+              <span class="name">config</span>
+              <span class="desc">Guarda defaults.</span>
+              <span class="meta"><code>baseUrl</code> y <code>defaultProfile</code> para trabajar local/prod.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">03 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 4 — ARQUITECTURA ============ -->
+    <section class="slide s-solution" id="s4">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo III —</span>
+            <h1 class="ed-title r-rise">Qué pasa <em class="italic purple">por debajo.</em></h1>
+            <p class="ed-standfirst r-rise-soft">El CLI no contiene el modelo: orquesta credenciales, arma requests y consume el backend de VAX.</p>
+          </header>
+
+          <div class="arch">
+            <div class="arch-node r-rise-soft">
+              <strong>Terminal</strong>
+              <span><code>vax quote</code>, flags o wizard Ink.</span>
+            </div>
+            <div class="arch-arrow r-fade">→</div>
+            <div class="arch-node r-rise-soft">
+              <strong>@vax/client</strong>
+              <span>HTTP wrapper, token Bearer, errores tipados y perfiles.</span>
+            </div>
+            <div class="arch-arrow r-fade">→</div>
+            <div class="arch-node r-rise-soft">
+              <strong>Backend</strong>
+              <span><code>/quote</code>, <code>/quote/dual</code>, <code>/quotes</code>, <code>/distance</code>.</span>
+            </div>
+          </div>
+
+          <p class="figure-caption r-fade"><b>Fig. 2.</b> Arquitectura del cliente. <em>La terminal es la puerta; la fuente de verdad sigue siendo el backend.</em></p>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">04 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 5 — AUTH Y CONFIG ============ -->
+    <section class="slide s-results" id="s5">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo IV —</span>
+            <h1 class="ed-title r-rise">Auth, perfiles y <em class="italic purple">diagnóstico.</em></h1>
+            <p class="ed-standfirst r-rise-soft">Antes de cotizar, el CLI necesita saber a qué backend hablar y con qué usuario firmar la llamada.</p>
+          </header>
+
+          <div class="callout-row">
+            <div class="terminal-card r-fade">
+              <div class="bar">
+                <div class="lights"><span></span><span></span><span></span></div>
+                <span>setup</span>
+              </div>
+              <pre><span class="prompt">$</span> <span class="cmd">vax config set baseUrl http://localhost:8001</span>
+<span class="prompt">$</span> <span class="cmd">vax login</span>
+<span class="out">abre /cli-login en navegador</span>
+<span class="prompt">$</span> <span class="cmd">vax whoami</span>
+<span class="prompt">$</span> <span class="cmd">vax doctor --json</span></pre>
+            </div>
+
+            <div class="dual-table r-fade">
+              <span class="th">Pieza</span>
+              <span class="th" style="text-align:right;">Rol</span>
+
+              <span class="row-label">credentials.json</span>
+              <span class="val">token + expiración</span>
+
+              <span class="row-label">config.json</span>
+              <span class="val">baseUrl + perfil</span>
+
+              <span class="row-label">--profile</span>
+              <span class="val">local / prod / demo</span>
+
+              <span class="row-label">doctor</span>
+              <span class="val">prueba completa</span>
+            </div>
+          </div>
+
+          <footer class="footnotes r-fade">
+            <span><b>¹</b> Los archivos viven en <code>~/.config/vax/</code>; las credenciales deben tener permisos privados.</span>
+            <span><b>²</b> <code>VAX_API_URL</code> y <code>VAX_FRONTEND_URL</code> permiten overrides por sesión.</span>
+          </footer>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">05 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 6 — QUOTE FLOW ============ -->
+    <section class="slide s-rigor" id="s6">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo V —</span>
+            <h1 class="ed-title r-rise">Cotizar no es un endpoint; es un <em class="italic purple">flujo.</em></h1>
+            <p class="ed-standfirst r-rise-soft">El comando decide si pregunta datos, calcula distancia, pide predicción dual y guarda el resultado.</p>
+          </header>
+
+          <div class="steps">
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">i.</span>
+              <span class="title">Entrada</span>
+              <span class="desc">Wizard si no hay flags; modo script si recibe origen, destino, equipo y km.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><path d="M4 7h16M4 12h10M4 17h7"/></svg></div>
+            </div>
+
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">ii.</span>
+              <span class="title">Ruta</span>
+              <span class="desc">Busca ubicaciones conocidas, resuelve Places y calcula distancia si puede.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><path d="M5 18c4-9 10 3 14-8"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="10" r="2"/></svg></div>
+            </div>
+
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">iii.</span>
+              <span class="title">Predicción</span>
+              <span class="desc"><code>/quote</code> da venta; <code>--dual</code> trae venta, costo, utilidad y margen.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><path d="M4 18l5-6 4 3 7-9"/><path d="M15 6h5v5"/></svg></div>
+            </div>
+
+            <div class="step r-rise-soft">
+              <span class="marker-dot"></span>
+              <span class="number">iv.</span>
+              <span class="title">Salida</span>
+              <span class="desc">Ink visual, JSON puro, número con <code>--quiet</code> o guardado con status.</span>
+              <div class="icon"><svg viewBox="0 0 24 24" class="draw-line"><path d="M5 5h14v14H5z"/><path d="M8 9h8M8 13h5"/></svg></div>
+            </div>
+          </div>
+
+          <footer class="footnotes r-fade">
+            <em>Campos relevantes: origen, destino, división, flujo, rango, equipo, pickup date, km, accesoriales, duración, peajes y altitud.</em>
+          </footer>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">06 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 7 — HISTORIAL Y ECOSISTEMA ============ -->
+    <section class="slide s-roadmap" id="s7">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <header class="ed-head">
+            <span class="ed-eyebrow r-fade">— Capítulo VI —</span>
+            <h1 class="ed-title r-rise">Después de cotizar: <em class="italic purple">operar.</em></h1>
+            <p class="ed-standfirst r-rise-soft">El CLI también cubre el ciclo de vida de una quote y se conecta con MCP y el agente terminal.</p>
+          </header>
+
+          <div class="toc">
+            <div class="chapter done r-rise-soft">
+              <span class="chap-no">i</span>
+              <span class="status">Historial</span>
+              <span class="title">quotes<br/>list/show</span>
+              <span class="desc">Búsqueda por ruta, cliente, UUID, status, usuario y fechas.</span>
+            </div>
+
+            <div class="chapter curr r-rise-soft">
+              <span class="chap-no">ii</span>
+              <span class="status">Ciclo</span>
+              <span class="title">draft · sent<br/>closed</span>
+              <span class="desc">Guardar, enviar, cerrar y registrar tarifa real para medir error.</span>
+              <span class="hand-mark">feedback → modelo</span>
+            </div>
+
+            <div class="chapter r-rise-soft">
+              <span class="chap-no">iii</span>
+              <span class="status">Kit</span>
+              <span class="title">MCP<br/>Agente</span>
+              <span class="desc">El mismo login alimenta <code>vax-mcp</code> y <code>vax-agent</code>.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">07 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ SLIDE 8 — DEMO HANDOFF ============ -->
+    <section class="slide s-close" id="s8">
+      <div class="frame">
+        <div class="frame-inner">
+
+          <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <div class="colophon-stamp r-fade">— Handoff —</div>
+            <div class="ornament-top">
+              <svg viewBox="0 0 240 36" class="doodle">
+                <path class="draw-line" d="M 4 18 L 90 18 M 150 18 L 236 18" />
+                <path class="draw-line" d="M 100 18 Q 110 6, 120 18 T 140 18" />
+                <circle class="draw-line" cx="120" cy="18" r="3" fill="currentColor" stroke="none"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="demo-script">
+            <div class="terminal-card r-fade">
+              <div class="bar">
+                <div class="lights"><span></span><span></span><span></span></div>
+                <span>demo path</span>
+              </div>
+              <pre><span class="prompt">$</span> <span class="cmd">vax --help</span>
+<span class="prompt">$</span> <span class="cmd">vax doctor</span>
+<span class="prompt">$</span> <span class="cmd">vax quote</span>
+<span class="prompt">$</span> <span class="cmd">vax quote --origin "Apodaca, NL" \
+  --destination "Laredo, TX" \
+  --equipment "DryVan 53" --dual</span>
+<span class="prompt">$</span> <span class="cmd">vax quotes list</span></pre>
+            </div>
+            <p class="cue r-fade">
+              La presentación termina aquí. El punto no es memorizar comandos:
+              es ver que el pricing engine ya puede vivir en un flujo real de operación,
+              automatización y diagnóstico.
+            </p>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center; gap:18px;">
+            <div class="ornament-bot">
+              <svg viewBox="0 0 240 36" class="doodle">
+                <path class="draw-line" d="M 4 18 L 96 18" />
+                <path class="draw-line" d="M 144 18 L 236 18" />
+                <path class="draw-line" d="M 105 18 L 135 18 M 120 8 L 120 28" />
+              </svg>
+            </div>
+            <div class="footer">Reto Optimización No-Lineal · ITESM · Mayo 2026</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="folio">
+        <span>VAX CLI · 2026</span>
+        <span class="page">08 / 08</span>
+      </div>
+    </section>
+
+    <!-- ============ PROGRESS DOTS ============ -->
+    <nav class="progress" id="progress" aria-label="Navegación"></nav>
+  </div>
+
+  <div class="hint">
+    <kbd>←</kbd><kbd>→</kbd>
+    <span>Navegar</span>
+  </div>
+</div>
+
+  <script src="scripts/gsap.min.js" defer></script>
+  <script src="scripts/counters.js" defer></script>
+  <script src="scripts/typewriter.js" defer></script>
+  <script src="scripts/timeline.js" defer></script>
+  <script src="scripts/nav.js" defer></script>
+  <script src="scripts/main.js" defer></script>
+</body>
+</html>
